@@ -15,3 +15,5 @@ $ node server.js
 $ yarn
 $ yarn start
 ```
+
+Then you could launch `http://localhost:3000` in a browser.
