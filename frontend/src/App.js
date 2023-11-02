@@ -15,16 +15,30 @@ function App() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userMessage }),
         });
-
-        const text = await res.text();
-        setResponse(text);
-    };
+    
+        if (res.body) {
+            const reader = res.body.getReader();
+            let text = '';
+    
+            return reader.read().then(function processText({ done, value }) {
+                if (done) {
+                    setResponse(text);
+                    return;
+                }
+    
+                text += new TextDecoder("utf-8").decode(value);
+                setResponse(text);
+                console.log("text", text);
+                return reader.read().then(processText);
+            });
+        }
+    };    
 
     return (
         <div className="App">
             <input type="text" value={userMessage} onChange={handleMessageChange} />
             <button onClick={handleButtonClick}>Send</button>
-            <div>{response}</div>
+            <div style={{ textAlign: 'left' }}>{response}</div>
         </div>
     );
 }

@@ -23,6 +23,7 @@ app.post('/complete', async (req, res) => {
     });
     
     for await (const part of stream) {
+        console.log("part.choices[0]?.delta?.content", part.choices[0]?.delta?.content)
         res.write(part.choices[0]?.delta?.content || '');
     }
     res.end();
