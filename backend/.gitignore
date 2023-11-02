@@ -1,0 +1,25 @@
+# .gitignore
+
+# Node modules
+node_modules
+
+# Environment variables
+.env
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Build directory
+build
+
+# OS generated files
+.DS_Store
+
+# IDE configurations
+.vscode
+.idea
+
+# Cache
+.cache
+
