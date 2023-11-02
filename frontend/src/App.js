@@ -9,6 +9,25 @@ function App() {
         setUserMessage(e.target.value);
     };
 
+    const handleButtonClickStop = async () => {
+        try {
+            const res = await fetch('http://localhost:3001/stop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userMessage }),
+            });
+            if (!res.ok) {
+                console.log("!res.ok")
+                throw new Error(`HTTP error! status: ${res.status}`);
+            } 
+            console.log("Handle successful stop action here if needed.")
+        } catch (error) {
+            console.log("Error stopping the message:", error)
+            console.error("Error stopping the message:", error);
+            // You might want to set an error state and display it to the user.
+        }
+    }
+
     const handleButtonClick = async () => {
         const res = await fetch('http://localhost:3001/complete', {
             method: 'POST',
@@ -28,7 +47,6 @@ function App() {
     
                 text += new TextDecoder("utf-8").decode(value);
                 setResponse(text);
-                console.log("text", text);
                 return reader.read().then(processText);
             });
         }
@@ -38,6 +56,7 @@ function App() {
         <div className="App">
             <input type="text" value={userMessage} onChange={handleMessageChange} />
             <button onClick={handleButtonClick}>Send</button>
+            <button onClick={handleButtonClickStop}>Stop</button>
             <div style={{ textAlign: 'left' }}>{response}</div>
         </div>
     );

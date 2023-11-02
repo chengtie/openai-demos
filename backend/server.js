@@ -8,6 +8,7 @@ const cors = require('cors'); // Import the cors library
 const app = express();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const controller = new AbortController();
 
 // Use cors middleware and allow any origin (not recommended for production)
 app.use(cors());
@@ -20,13 +21,20 @@ app.post('/complete', async (req, res) => {
         model: 'gpt-4',
         messages: [{ role: 'user', content: userMessage }],
         stream: true,
-    });
+    }, { signal: controller.signal });
     
     for await (const part of stream) {
+        console.log("part", part);
         console.log("part.choices[0]?.delta?.content", part.choices[0]?.delta?.content)
         res.write(part.choices[0]?.delta?.content || '');
     }
+    console.log("stream", stream)
     res.end();
+});
+
+app.post('/stop', async (req, res) => {
+    controller.abort();
+    res.send("Stream aborted").status(200).end();
 });
 
 app.listen(3001, () => {
