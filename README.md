@@ -1,6 +1,16 @@
 # openai-demos
 
-### Run the backend
+### Run the Python backend
+
+```
+$ cd python
+$ /usr/local/bin/python3.12 -m venv venv
+$ source venv/bin/activate
+$ pip install flask tiktoken
+$ python app.py
+```
+
+### Run the Node backend
 
 You need to have a local `.env` which contains `OPENAI_API_KEY`.
 
