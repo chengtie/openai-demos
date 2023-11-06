@@ -6,6 +6,7 @@ function App() {
     const [userMessage, setUserMessage] = useState('');
     const [response, setResponse] = useState('');
     const [tokenCount, setTokenCount] = useState(null); // New state for token count
+    const [wordCount, setWordCount] = useState(null); // New state for word count
     const [requestId, setRequestId] = useState(''); // State to keep track of the current requestId
 
     const handleMessageChange = (e) => {
@@ -24,6 +25,16 @@ function App() {
             }
             const data = await res.json(); // Get the token count from the response
             setTokenCount(data.tokenCount); // Update the tokenCount state
+
+            const words = userMessage.match(/\S+/g);
+            // Return the number of matches, which is the word count.
+            // If there are no matches, return 0.
+            if (words) {
+                setWordCount(words.length);
+            } else {
+                setWordCount(0)
+            }
+
         } catch (error) {
             console.error("Error counting tokens:", error);
             setTokenCount(null); // Reset token count on error
@@ -82,6 +93,7 @@ function App() {
             <button onClick={handleButtonClickStop}>Stop</button>
             <button onClick={handleButtonClickCount}>Count</button>
             {tokenCount !== null && <p>Token Count: {tokenCount}</p>} {/* Display the token count */}
+            {wordCount !== null && <p>Word Count: {wordCount/0.75}</p>} {/* Display the word count */}
             <div style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{response}</div>
         </div>
     );
