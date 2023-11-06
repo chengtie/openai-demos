@@ -5,10 +5,29 @@ import './App.css';
 function App() {
     const [userMessage, setUserMessage] = useState('');
     const [response, setResponse] = useState('');
+    const [tokenCount, setTokenCount] = useState(null); // New state for token count
     const [requestId, setRequestId] = useState(''); // State to keep track of the current requestId
 
     const handleMessageChange = (e) => {
         setUserMessage(e.target.value);
+    };
+
+    const handleButtonClickCount = async () => {
+        try {
+            const res = await fetch('http://localhost:3001/token-count', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: userMessage }), // Send the userMessage to be counted
+            });
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            const data = await res.json(); // Get the token count from the response
+            setTokenCount(data.tokenCount); // Update the tokenCount state
+        } catch (error) {
+            console.error("Error counting tokens:", error);
+            setTokenCount(null); // Reset token count on error
+        }
     };
 
     const handleButtonClickStop = async () => {
@@ -61,6 +80,8 @@ function App() {
             <input type="text" value={userMessage} onChange={handleMessageChange} />
             <button onClick={handleButtonClick}>Send</button>
             <button onClick={handleButtonClickStop}>Stop</button>
+            <button onClick={handleButtonClickCount}>Count</button>
+            {tokenCount !== null && <p>Token Count: {tokenCount}</p>} {/* Display the token count */}
             <div style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{response}</div>
         </div>
     );

@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const OpenAI = require('openai');
 const cors = require('cors'); // Import the cors library
+const axios = require('axios'); // Make sure to install axios
 
 const app = express();
 
@@ -44,6 +45,23 @@ app.post('/stop', async (req, res) => {
         res.send(`Stream ${requestId} aborted`).status(200).end();
     } else {
         res.send(`Stream ${requestId} not found or already aborted`).status(404).end();
+    }
+});
+
+// New endpoint to get the token count for a given text
+app.post('/token-count', async (req, res) => {
+    const { text } = req.body;
+    if (!text) {
+        return res.status(400).send({ error: 'Text is required' });
+    }
+
+    // Function to interact with the Python microservice to get the token count
+    try {
+        const response = await axios.post('http://localhost:5000/tokenize', { text });
+        res.send({ tokenCount: response.data.token_count });
+    } catch (error) {
+        console.error('Error getting token count:', error);
+        res.status(500).send({ error: 'Failed to get token count' });
     }
 });
 
