@@ -37,6 +37,70 @@ app.post('/complete', async (req, res) => {
     res.end();
 });
 
+app.post('/get-table', async(req, res) => {
+    const userMessage = req.body.userMessage;
+    const x = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: userMessage }],
+        stream: false
+    })
+    console.log("x", x);
+    res.json(x)
+})
+
+app.post('/get-only-table', async(req, res) => {
+    const tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_number_of_cells_of_a_table",
+                "description": "Get the total number of the cells (i.e, the length times the height) of a table",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "table": {
+                            "type": "string",
+                            "descrption": "the stringified representation of a table in form of one-dimensional or two-dimensional array"
+                        }
+                    },
+                    "required": ["table"]
+                }
+            }
+        }
+    ]
+
+    const tools2 = [
+        {
+            "type": "function",
+            "function": {
+                "name": "extract_table_from_a_text",
+                "description": "extract a table from a text which may include some unnecessary comments",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": "a string which should contain the stringified representation of a one-dimensional or two-dimensional table and maybe some comments."
+                        }
+                    },
+                    "required": ["text"]
+                }
+            }
+        }
+    ]
+
+    const userMessage = req.body.userMessage;
+    const x = await openai.chat.completions.create({
+        model: "gpt-4-1106-preview",
+        messages: [{ role: 'user', content: userMessage }],
+        // tools: tools,
+        tools: tools2,
+        tool_choice: "auto"
+    })
+    console.log("x", x);
+    res.json(x)
+})
+
 app.post('/stop', async (req, res) => {
     const requestId = req.body.requestId; // Expect the same unique identifier to abort the right stream
     if (controllers[requestId]) {

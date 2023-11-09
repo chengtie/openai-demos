@@ -58,6 +58,42 @@ function App() {
         }
     };
 
+    const getTable = async () => {
+        try {
+            const res = await fetch('http://localhost:3001/get-table', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userMessage })
+            });
+            if (res.ok) {
+                const data = await res.json(); // This parses the JSON body of the response
+                console.log("data", data);
+            } else {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+        } catch (error) {
+            console.error("There is an error:", error);
+        }
+    }
+
+    const getOnlyTable = async () => {
+        try {
+            const res = await fetch('http://localhost:3001/get-only-table', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userMessage })
+            });
+            if (res.ok) {
+                const data = await res.json(); // This parses the JSON body of the response
+                console.log("data", data);
+            } else {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+        } catch (error) {
+            console.error("There is an error:", error);
+        }
+    }
+
     const handleButtonClick = async () => {
         const newRequestId = uuidv4(); // Generate a new unique requestId
         setRequestId(newRequestId); // Set the requestId in the state
@@ -89,6 +125,8 @@ function App() {
     return (
         <div className="App">
             <input type="text" value={userMessage} onChange={handleMessageChange} />
+            <button onClick={getTable}>getTable</button>
+            <button onClick={getOnlyTable}>getOnlyTable</button>
             <button onClick={handleButtonClick}>Send</button>
             <button onClick={handleButtonClickStop}>Stop</button>
             <button onClick={handleButtonClickCount}>Count</button>
