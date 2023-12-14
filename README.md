@@ -16,6 +16,7 @@ You need to have a local `.env` which contains `OPENAI_API_KEY`.
 
 ```
 $ cd backend
+$ npm install
 $ node server.js
 ```
 
