@@ -23,7 +23,7 @@ app.post('/complete', async (req, res) => {
 
     const userMessage = req.body.userMessage;
     const stream = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4-1106-preview',
         messages: [{ role: 'user', content: userMessage }],
         stream: true,
     }, { signal: controllers[requestId].signal });
