@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 
-// Check if Office is in the context (indicating that the add-in is running in Excel)
-if (typeof Office !== 'undefined' && Office.onReady) {
+// Check if Office is defined and Office.onReady is a function
+if (typeof Office !== 'undefined' && typeof Office.onReady === 'function') {
   Office.onReady((info) => {
     if (info.host === Office.HostType.Excel) {
       // Office is ready, render your React app
