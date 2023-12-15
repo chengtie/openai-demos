@@ -98,7 +98,7 @@ function App() {
         const newRequestId = uuidv4(); // Generate a new unique requestId
         setRequestId(newRequestId); // Set the requestId in the state
 
-        const res = await fetch('http://localhost:3001/complete', {
+        const res = await fetch('http://47.242.26.87:3001/complete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ requestId: newRequestId, userMessage }), // Send the new unique requestId with the request
@@ -115,7 +115,9 @@ function App() {
                     return;
                 }
     
-                text += new TextDecoder("utf-8").decode(value);
+                const v = new TextDecoder("utf-8").decode(value);
+                console.log(v)
+                text = text + v;
                 setResponse(text);
                 return reader.read().then(processText);
             });
