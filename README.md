@@ -12,7 +12,7 @@ $ python app.py
 
 ### Run the Node backend
 
-You need to have a local `.env` which contains `OPENAI_API_KEY`. We can use Node.js `14.21.3`
+You need to have a local `.env` which contains `OPENAI_API_KEY`. We can use Node.js `14.21.3`.
 
 ```
 $ cd backend
