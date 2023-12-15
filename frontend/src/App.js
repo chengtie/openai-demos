@@ -98,7 +98,8 @@ function App() {
         const newRequestId = uuidv4(); // Generate a new unique requestId
         setRequestId(newRequestId); // Set the requestId in the state
 
-        const res = await fetch('http://47.242.26.87:3001/complete', {
+        // const res = await fetch('http://47.242.26.87:3001/complete', {
+        const res = await fetch('https://back.powerlib.tech/complete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ requestId: newRequestId, userMessage }), // Send the new unique requestId with the request
