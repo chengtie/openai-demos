@@ -11,8 +11,29 @@ const app = express();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const controllers = {};
 
+const https = require('https');
+const fs = require('fs'); // Node.js file system module
+
+// Load SSL/TLS certificate and private key
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/back.powerlib.tech/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/back.powerlib.tech/fullchain.pem', 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(443, () => {
+  console.log(`Server is running on port 443 over HTTPS`);
+});
+
+const corsOptions = {
+  origin: 'https://www.powerlib.tech', // Replace with your actual front-end URL
+  methods: ['POST'], // Add other HTTP methods if needed
+  optionsSuccessStatus: 204, // No Content response for preflight requests
+};
+
 // Use cors middleware and allow any origin (not recommended for production)
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
@@ -129,6 +150,6 @@ app.post('/token-count', async (req, res) => {
     }
 });
 
-app.listen(3001, () => {
-    console.log('Server is running on http://localhost:3001');
-});
+// app.listen(3000, () => {
+//    console.log('Server is running on http://localhost:3001');
+// });
