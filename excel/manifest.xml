@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+    xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
+    <Id>31c563af-a06d-486c-8fc9-cae7288c34c1</Id>
+    <Version>1.0.0.0</Version>
+    <ProviderName>Matrix Lead</ProviderName>
+    <DefaultLocale>en-US</DefaultLocale>
+    <DisplayName DefaultValue="DisplayName" />
+    <Description DefaultValue="Description"/>
+    <IconUrl DefaultValue="https://v5.10studio.tech/images/formulaEditorLogo3232.png"/>
+    <HighResolutionIconUrl DefaultValue="https://v5.10studio.tech/images/formulaEditorLogo6464.png" />
+
+    <SupportUrl DefaultValue="https://www.10studio.tech/addinHelp"></SupportUrl>
+    <AppDomains>
+        <AppDomain>https://www.10studio.tech</AppDomain>
+        <AppDomain>https://v5.10studio.tech</AppDomain>
+        <AppDomain>https://www.powerlib.tech</AppDomain>
+        <AppDomain>https://back.powerlib.tech</AppDomain>
+    </AppDomains>
+    <Hosts>
+        <Host Name="Workbook" />
+    </Hosts>
+    <Requirements>
+        <Sets>
+            <Set Name="ExcelApi" MinVersion="1.2"/>
+        </Sets>
+    </Requirements>
+    <DefaultSettings>
+        <SourceLocation DefaultValue="https://www.powerlib.tech" />
+    </DefaultSettings>
+    <Permissions>ReadWriteDocument</Permissions>
+
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+        <Hosts>
+            <Host xsi:type="Workbook">
+                <DesktopFormFactor>
+                    <GetStarted>
+                        <Title resid="Contoso.GetStarted.Title"/>
+                        <Description resid="Contoso.GetStarted.Description"/>
+                        <LearnMoreUrl resid="Contoso.GetStarted.LearnMoreUrl"/>
+                    </GetStarted>
+                    <FunctionFile resid="Contoso.FunctionFile.Url" />
+                    <ExtensionPoint xsi:type="PrimaryCommandSurface">
+                        <CustomTab id="Contoso.Tab1">
+                            <Group id="Contoso.GroupEditor">
+                                <Label resid="Contoso.GroupEditor.Label" />
+                                <Icon>
+                                    <bt:Image size="16" resid="Contoso.tpEditorIcon_16x16" />
+                                    <bt:Image size="32" resid="Contoso.tpEditorIcon_32x32" />
+                                    <bt:Image size="80" resid="Contoso.tpEditorIcon_80x80" />
+                                </Icon>
+                                <Control xsi:type="Button" id="Contoso.TpButtonEditor">
+                                    <Label resid="Contoso.TpButtonEditor.Label" />
+                                    <Supertip>
+                                        <Title resid="Contoso.TpButtonEditor.Label" />
+                                        <Description resid="Contoso.TpButtonEditor.Tooltip" />
+                                    </Supertip>
+                                    <Icon>
+                                        <bt:Image size="16" resid="Contoso.tpEditorIcon_16x16" />
+                                        <bt:Image size="32" resid="Contoso.tpEditorIcon_32x32" />
+                                        <bt:Image size="80" resid="Contoso.tpEditorIcon_80x80" />
+                                    </Icon>
+                                    <Action xsi:type="ShowTaskpane">
+                                        <TaskpaneId>Office.AutoShowTaskpaneWithDocument</TaskpaneId>
+                                        <SourceLocation resid="Contoso.TaskpaneEditor.Url" />
+                                    </Action>
+                                </Control>
+                            </Group>
+                            <Label resid="Contoso.Tab1.TabLabel" />
+                        </CustomTab>
+                    </ExtensionPoint>
+                </DesktopFormFactor>
+            </Host>
+        </Hosts>
+
+        <Resources>
+            <bt:Images>
+                <bt:Image id="Contoso.tpEditorIcon_16x16" DefaultValue="https://v5.10studio.tech/images/formulaEditorLogo1616.png" />
+                <bt:Image id="Contoso.tpEditorIcon_32x32" DefaultValue="https://v5.10studio.tech/images/formulaEditorLogo3232.png" />
+                <bt:Image id="Contoso.tpEditorIcon_80x80" DefaultValue="https://v5.10studio.tech/images/formulaEditorLogo8080.png" />
+            </bt:Images>
+            <bt:Urls>
+                <bt:Url id="Contoso.TaskpaneEditor.Url" DefaultValue="https://www.powerlib.tech" />
+                <bt:Url id="Contoso.GetStarted.LearnMoreUrl" DefaultValue="https://www.10studio.tech/addinHelp" />
+                <bt:Url id="Contoso.FunctionFile.Url" DefaultValue="https://v5.10studio.tech/functions.html" />
+            </bt:Urls>
+            <bt:ShortStrings>
+                <bt:String id="Contoso.Tab1.TabLabel" DefaultValue="TabLabel1" />
+                <bt:String id="Contoso.GetStarted.Title" DefaultValue="Title" />
+                <bt:String id="Contoso.GroupEditor.Label" DefaultValue="Label" />
+                <bt:String id="Contoso.TpButtonEditor.Label" DefaultValue="Label" />
+                <bt:String id="Contoso.TaskpaneEditor.Title" DefaultValue="Title" />
+                <bt:String id="Contoso.GroupLibraries.Label" DefaultValue="Libraries" />
+            </bt:ShortStrings>
+            <bt:LongStrings>
+                <bt:String id="Contoso.GetStarted.Description" DefaultValue='Description' />
+                <bt:String id="Contoso.TpButtonEditor.Tooltip" DefaultValue="Tooltip" />
+            </bt:LongStrings>
+        </Resources>
+    </VersionOverrides>
+
+</OfficeApp>
