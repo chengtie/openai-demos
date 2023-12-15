@@ -37,7 +37,7 @@
     "regenerator-runtime": "^0.13.7",
     "rehype-raw": "6.1.1",
     "remark-gfm": "^4.0.0",
-    "remark-parse": "^11.0.0"
+    "remark-parse": "10.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
