@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // import the uuid function
+import PostBody from './PostBody'
 // import "./App.css";
 
 export default function Page() {
@@ -46,6 +47,10 @@ export default function Page() {
             <input type="text" value={userMessage} onChange={handleMessageChange} />
             <button onClick={handleButtonClick}>Send</button>
             <div style={{ whiteSpace: "pre-wrap", textAlign: "left" }}>{response}</div>
+            <PostBody
+                    message={{role: "assistant", content: response}}
+                    openFormulaInEditor={() => {}}
+            />
         </div>
     );
 }
