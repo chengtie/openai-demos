@@ -27,7 +27,7 @@ httpsServer.listen(443, () => {
 });
 
 const corsOptions = {
-  origin: 'https://www.powerlib.tech', // Replace with your actual front-end URL
+  origin: ['https://www.powerlib.tech', 'https://v11.10studio.tech'],
   methods: ['POST'], // Add other HTTP methods if needed
   optionsSuccessStatus: 204, // No Content response for preflight requests
 };
