@@ -37,6 +37,96 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
+app.post('/complete-new', async (req, res) => {
+    // const user = res.locals.user;
+    // console.log("user", user)
+    const messages = req.body.messages;
+    const input = {
+        model: req.body.model === "gpt-4" ? "gpt-4-1106-preview" : req.body.model,
+        messages: messages,
+        stream: true,
+    }
+
+    const startTime = Date.now();
+    let err, accumulatedText, result;
+    try {
+        // throw new Error('Simulated error for testing'); // simulate a run-time error
+        const stream = await openai.chat.completions.create(input);
+
+        accumulatedText = "";
+        for await (const part of stream) {
+            console.log("part.choices[0]?.delta?.content", part.choices[0]?.delta?.content)
+            x = part.choices[0]?.delta?.content || '';
+            accumulatedText += x;
+            res.write(JSON.stringify({ type: "stream", value: x }) + "\n");
+        }
+
+        // count words to count tokens
+        let prompt_words = 0;
+        console.log("input.messages", input.messages)
+        for (const message of input.messages) {
+            console.log("message", message)
+            const wordCount = message.content.split(' ').length;
+            prompt_words += wordCount;
+        }
+        const completion_words = accumulatedText.split(/\s+/).filter(Boolean).length;
+
+        // construct the result
+        // https://gpt.space/blog/understanding-openai-gpt-tokens-a-comprehensive-guide#:~:text=OpenAI%20provides%20an%20official%20tokenizer,1%20word%20%E2%89%88%201.3%20tokens
+        result = {
+            model: req.body.model === "gpt-4" ? "gpt-4-1106-preview" : req.body.model,
+            usage: {
+                prompt_tokens: parseFloat((prompt_words * 1.3).toFixed(2)),
+                completion_tokens: parseFloat((completion_words * 1.3).toFixed(2)),
+                total_tokens: parseFloat((prompt_words * 1.3 + completion_words * 1.3).toFixed(2))
+            }
+        }
+    } catch (error) {
+		console.log("error", error)
+		err = error;
+        result = {
+            model: req.body.model === "gpt-4" ? "gpt-4-1106-preview" : req.body.model,
+            usage: {
+                prompt_tokens: 0,
+                completion_tokens: 0,
+                total_tokens: 0
+            }
+        }
+    }
+    const endTime = Date.now();
+	const executionTime = endTime - startTime;
+	console.log("time, openai.createChatCompletion", executionTime, "ms")
+
+    var aiResult_wo_userId = new {
+		date: new Date(),
+		// userId: user._id,
+		input: input,
+		result: result,
+		executionTime: executionTime,
+		errorMessage: err? err.message : null,
+		errorToString: err? err.toString() : null,
+		settings: req.body.settings,
+		account: "tie.cheng@matrixlead.com",
+		caller: "ai-chat-v4-streaming"
+	}
+
+    // don't send emails at the moment
+    // if (err) {
+	// 	const msg = JSON.stringify(aiResult)
+	// 	emailService.sendMailGrid({
+	// 		to: 'chengtie@gmail.com', subject: "AI request error, streaming", text: msg, html: `<p>${msg}</p>`,
+	// 		category: 'problem', unique_args: { user_email: 'chengtie@gmail.com' }})
+	// }
+
+    // Send either an error or aiResult to the frontend, don't save aiResult.
+    if (err) {
+        res.status(500).json({ errorMessage: err.message, errorToString: err.toString() });
+    } else {
+        res.write(JSON.stringify({ type: "aiResult_wo_userId", value: aiResult_wo_userId }) + "\n");
+        res.end();
+    }
+});
+
 app.post('/complete', async (req, res) => {
     const requestId = req.body.requestId; // You need to send a unique identifier with each request
     const controller = new AbortController();
