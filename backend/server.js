@@ -97,7 +97,7 @@ app.post('/complete-new', async (req, res) => {
 	const executionTime = endTime - startTime;
 	console.log("time, openai.createChatCompletion", executionTime, "ms")
 
-    var aiResult_wo_userId = new {
+    var aiResult_wo_userId = {
 		date: new Date(),
 		// userId: user._id,
 		input: input,
