@@ -11,20 +11,23 @@ const app = express();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const controllers = {};
 
-const https = require('https');
-const fs = require('fs'); // Node.js file system module
+let server;
 
-// Load SSL/TLS certificate and private key
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/back.powerlib.tech/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/back.powerlib.tech/fullchain.pem', 'utf8');
+if (process.env.NODE_ENV === 'production') {
+    const https = require('https');
 
-const credentials = { key: privateKey, cert: certificate };
+    const fs = require('fs'); // Node.js file system module
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/back.powerlib.tech/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/back.powerlib.tech/fullchain.pem', 'utf8');
+    const credentials = { key: privateKey, cert: certificate };
 
-const httpsServer = https.createServer(credentials, app);
-
-httpsServer.listen(443, () => {
-  console.log(`Server is running on port 443 over HTTPS`);
-});
+    server = https.createServer(credentials, app);
+    console.log("production")
+} else {
+    const http = require('http');
+    server = http.createServer(app);
+    console.log("localhost")
+}
 
 const corsOptions = {
   origin: ['https://www.powerlib.tech', 'https://v11.10studio.tech', 'https://v6.10studio.tech'],
@@ -36,6 +39,54 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
+
+const WebSocket = require('websocket').server;
+const wsServer = new WebSocket({ httpServer: server });
+
+wsServer.on('request', (request) => {
+    const connection = request.accept(null, request.origin);
+
+    connection.on('message', (message) => {
+        if (message.type === "utf8") {
+            const data = JSON.parse(message.utf8Data);
+
+            if (data.type === 'userMessage') {
+                handleWebSocketUserMessage(data.content, connection);
+            }
+        }
+        // // Handle WebSocket messages here
+        // console.log(`Received message: ${message.utf8Data}`);
+        // // Send a sample response back to the client
+        // connection.sendUTF('Hello from the server!' + ' ' + message.utf8Data);
+    });
+
+    connection.on('close', (reasonCode, description) => {
+        console.log(`Connection closed: ${reasonCode} - ${description}`);
+    });
+});
+
+// Handle WebSocket user messages
+async function handleWebSocketUserMessage(userMessage, connection) {
+    const input = {
+        model: 'gpt-4-1106-preview',
+        messages: [{ role: 'user', content: userMessage }],
+        stream: true,
+    };
+
+    try {
+        const stream = await openai.chat.completions.create(input);
+
+        for await (const part of stream) {
+            if (part.choices[0]?.delta?.content) {
+                const responseMessage = { type: 'stream', value: part.choices[0]?.delta?.content };
+                connection.sendUTF(JSON.stringify(responseMessage));
+            }
+        }
+    } catch (error) {
+        console.error('Error processing WebSocket user message:', error);
+        // Handle the error and send an appropriate response back to the frontend
+    }
+}
 
 app.post('/complete-new', async (req, res) => {
     // const user = res.locals.user;
@@ -240,6 +291,12 @@ app.post('/token-count', async (req, res) => {
     }
 });
 
-// app.listen(3000, () => {
-//    console.log('Server is running on http://localhost:3001');
-// });
+if (process.env.NODE_ENV === 'production') {
+    server.listen(443, () => {
+        console.log(`Server is running on port 443 over HTTPS`);
+    });
+} else {
+    server.listen(3000, () => {
+        console.log('Server is running on http://localhost:3000');
+    })
+}
